@@ -15,3 +15,72 @@ sudo apt install jenkins
 sudo systemctl start Jenkins 
 sudo systemctl enable Jenkins 
 sudo systemctl status Jenkins 
+
+>>> https://github.com/benc-uk/python-demoapp.git
+
+# 6
+
+$ mkdir ansible-practice1 
+$ cd ansible-practice1 
+$ nano playbook01.yml
+
+--- 
+- hosts: localhost 
+  tasks: 
+    - name: Print message 
+      debug: 
+        msg: Hello Ansible World 
+
+$ ansible-playbook -i inventory playbook-01.yml -u username
+
+# 8
+
+$ sudo ansible-galaxy init prerequisites
+$ sudo nano prerequisites/tasks/main.yml
+
+---
+# tasks file for prerequisites 
+- name: Install git 
+  apt: 
+    name: git 
+    state: present 
+    update_cache: yes
+
+$ sudo ansible-galaxy init PostgreSQL
+$ sudo nano PostgreSQL/tasks/main.yml
+
+---
+# tasks file for PostgreSQL 
+- name: Install PostgreSQL 
+  apt: 
+    name: postgresql 
+    state: present 
+    update_cache: yes 
+- name: Start PostgreSQL service 
+  systemd: 
+    name: postgresql 
+    state: started 
+    enabled: yes 
+
+$ sudo ansible-galaxy init apache
+$ sudo nano apache/tasks/main.yml
+
+---
+# tasks file for apache 
+- name: install Apache web server 
+  apt: 
+    name: apache2 
+    state: present 
+    update_cache: yes
+
+$ sudo nano stack.yml
+
+---
+- hosts: localhost 
+  become: true 
+  roles: 
+        - prerequisites 
+        - PostgreSQL 
+        - apache
+
+$ sudo ansible-playbook stack.yml
